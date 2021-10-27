@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <!-- Библиотеки должны быть одной версии -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+            integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-1.12.1.js"
+            integrity="sha256-VuhDpmsr9xiKwvTIHfYWCIQ84US9WqZsLfR4P7qF6O8=" crossorigin="anonymous"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            let search = window.location.search;
+            let urlParams = new URLSearchParams(search);
+            window.session_id = urlParams.get('session_id');
+            window.places = urlParams.get('places');
+            let sessionTitle = getSessionTitle(window.session_id);
+            let places = window.places.split(',');
+            let placeTitles = '';
+            for (let i = 0; i < places.length; i++) {
+                let row = places[i].split('')[0];
+                let cell = places[i].split('')[1];
+                placeTitles += 'ряд ' + row + ' - место ' + cell + ', стоимость 500 руб.,' + '<br>';
+                if (i === places.length - 1) {
+                    placeTitles = placeTitles.substring(0, placeTitles.length - 5);
+                    placeTitles += '<br>' + 'ИТОГО К ОПЛАТЕ: ' + 500 * places.length + ' рублей.';
+                }
+            }
+            document.getElementById('header').innerHTML =
+                'Вы выбрали сеанс на ' + sessionTitle + ',' + '<br>' + placeTitles;
+        });
+
+        function getSessionTitle(session_id) {
+            let title = '';
+            if (session_id === '1') {
+                title = '14:00';
+            } else if (session_id === '2') {
+                title = '16:00';
+            } else if (session_id === '3') {
+                title = '18:00';
+            } else if (session_id === '4') {
+                title = '20:00';
+            } else if (session_id === '5') {
+                title = '22:00';
+            } else {
+                alert('Не верный сеанс!');
+            }
+            return title;
+        }
+
+        function validate() {
+            let name = $('#username');
+            let email = $('#email');
+            let phone = $('#phone');
+            let array = [name, email, phone];
+            for (let i = 0; i < array.length; i++) {
+                if (array[i].val() === '') {
+                    alert(array[i].attr('title') + ' не заполнено!');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function setUrl() {
+            let url = "/cinema/hall.do?session_id=" + window.session_id
+                + '&places=' + window.places;
+            document.getElementById('order').setAttribute('action', url);
+        }
+
+    </script>
+
+    <title>Оплата</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="row pt-3">
+        <h3 id="header"></h3>
+    </div>
+    <div class="row">
+        <form id="order" onsubmit="setUrl()" method="post">
+            <div class="form-group">
+                <label for="username">ФИО</label>
+                <input type="text" class="form-control" id="username" placeholder="Введите ФИО"
+                       title="Поле ФИО" name="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Почта</label>
+                <input type="email" class="form-control" id="email" placeholder="Введите почту"
+                       title="Поле ПОЧТА" name="email">
+            </div>
+            <div class="form-group">
+                <label for="phone">Номер телефона</label>
+                <input type="text" class="form-control" id="phone" placeholder="Введите номер телефона"
+                       title="Поле НОМЕР ТЕЛЕФОНА" name="phone">
+            </div>
+            <button type="submit" class="btn btn-success" onclick="return validate()">Оплатить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
